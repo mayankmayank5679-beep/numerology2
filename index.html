@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NumeroPath AI — Health & Career Guidance Through Numerology</title>
+  <meta name="description" content="A modern AI numerology experience offering personalized health and career insights based on your name and birth date." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bg:#0a0b14;
+      --panel:rgba(255,255,255,.08);
+      --border:rgba(255,255,255,.14);
+      --text:#eef2ff;
+      --muted:#b8c0ff;
+      --accent1:#8b5cf6;
+      --accent2:#06b6d4;
+      --accent3:#ec4899;
+      --success:#22c55e;
+      --warning:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(139,92,246,.25), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(6,182,212,.18), transparent 28%),
+        radial-gradient(circle at 60% 80%, rgba(236,72,153,.18), transparent 30%),
+        linear-gradient(135deg, #05060d 0%, #0b1020 45%, #0b0c14 100%);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    .glass{
+      background:var(--panel);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border:1px solid var(--border);
+      box-shadow: 0 10px 40px rgba(0,0,0,.28);
+    }
+    .glow{
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.05) inset,
+        0 10px 30px rgba(139,92,246,.18),
+        0 6px 18px rgba(6,182,212,.08);
+    }
+    .gradient-text{
+      background: linear-gradient(90deg, #c4b5fd, #67e8f9, #f9a8d4);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .hero-grid{
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: radial-gradient(circle at center, black 45%, transparent 85%);
+    }
+    .orbit{
+      position:absolute;
+      inset:auto;
+      border:1px dashed rgba(255,255,255,.12);
+      border-radius:9999px;
+      animation:spin 28s linear infinite;
+    }
+    .orbit.reverse{animation-direction:reverse; animation-duration:22s;}
+    .pulse-dot{
+      width:12px;height:12px;border-radius:9999px;position:absolute;
+      background:linear-gradient(135deg, var(--accent2), white);
+      box-shadow:0 0 20px rgba(6,182,212,.9), 0 0 40px rgba(139,92,246,.4);
+    }
+    @keyframes spin {to{transform:rotate(360deg)}}
+    @keyframes float {
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-12px)}
+    }
+    @keyframes fadeUp{
+      from{opacity:0; transform:translateY(18px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+    .fade-up{animation:fadeUp .7s ease forwards}
+    .float{animation:float 5s ease-in-out infinite}
+    .slider-track{
+      background: linear-gradient(90deg, rgba(139,92,246,.9), rgba(6,182,212,.9));
+    }
+    input[type="range"]{
+      -webkit-appearance:none; appearance:none; width:100%; height:8px; border-radius:9999px; outline:none;
+      background:rgba(255,255,255,.12);
+    }
+    input[type="range"]::-webkit-slider-thumb{
+      -webkit-appearance:none; appearance:none; width:22px; height:22px; border-radius:50%;
+      background:white; border:3px solid #8b5cf6; box-shadow:0 6px 18px rgba(0,0,0,.35);
+      cursor:pointer;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator{
+      filter: invert(1) opacity(.8);
+      cursor:pointer;
+    }
+    .card-hover{transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease}
+    .card-hover:hover{transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,.35); border-color:rgba(255,255,255,.22)}
+    .typing::after{
+      content:"";
+      display:inline-block;
+      width:8px;height:1.1em;
+      margin-left:4px;
+      vertical-align:-2px;
+      background:currentColor;
+      animation:blink 1s steps(2,start) infinite;
+    }
+    @keyframes blink {50%{opacity:0}}
+    .disclaimer{
+      background: linear-gradient(90deg, rgba(245,158,11,.12), rgba(239,68,68,.08));
+      border:1px solid rgba(245,158,11,.25);
+    }
+    .soft-ring{
+      position:relative;
+    }
+    .soft-ring::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius:inherit;
+      padding:1px;
+      background: linear-gradient(135deg, rgba(139,92,246,.7), rgba(6,182,212,.45), rgba(236,72,153,.55));
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      pointer-events:none;
+    }
+    .meter{
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.1);
+      overflow:hidden;
+      position:relative;
+    }
+    .meter > span{
+      display:block;
+      height:100%;
+      border-radius:inherit;
+      background: linear-gradient(90deg, #8b5cf6, #06b6d4, #ec4899);
+      box-shadow: inset 0 0 20px rgba(255,255,255,.15);
+      transition: width .8s cubic-bezier(.2,.8,.2,1);
+    }
+    .chip{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+    }
+  </style>
+</head>
+<body>
+  <div class="fixed inset-0 pointer-events-none hero-grid"></div>
+
+  <header class="sticky top-0 z-40 backdrop-blur bg-black/20 border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="h-16 flex items-center justify-between">
+        <a href="#top" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl glass glow flex items-center justify-center text-xl">🔮</div>
+          <div>
+            <div class="font-semibold tracking-wide">NumeroPath AI</div>
+            <div class="text-xs text-indigo-200/80 -mt-0.5">Health & Career Numerology Guide</div>
+          </div>
+        </a>
+        <nav class="hidden md:flex items-center gap-6 text-sm text-indigo-100/80">
+          <a href="#analyzer" class="hover:text-white transition">Analyzer</a>
+          <a href="#features" class="hover:text-white transition">Features</a>
+          <a href="#how" class="hover:text-white transition">How it works</a>
+        </nav>
+        <a href="#analyzer" class="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium glass hover:bg-white/10 transition">
+          Try now
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="relative overflow-hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 md:pt-20 md:pb-24">
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
+          <div class="fade-up">
+            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs glass border border-white/10 text-indigo-100/90">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              Personalized numerology insights, instantly
+            </div>
+            <h1 class="mt-6 text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight">
+              AI-powered <span class="gradient-text">numerology</span> for
+              <span class="gradient-text">health</span> and <span class="gradient-text">career</span> guidance
+            </h1>
+            <p class="mt-5 text-base sm:text-lg text-indigo-100/75 max-w-xl">
+              Discover your life path, destiny number, and personality vibration to receive beautifully tailored wellness and career suggestions.
+            </p>
+            <div class="mt-8 flex flex-col sm:flex-row gap-3">
+              <a href="#analyzer" class="rounded-2xl px-5 py-3 font-medium bg-white text-slate-900 hover:bg-slate-100 transition shadow-lg shadow-white/10">
+                Start reading
+              </a>
+              <a href="#how" class="rounded-2xl px-5 py-3 font-medium glass hover:bg-white/10 transition">
+                Learn how it works
+              </a>
+            </div>
+            <div class="mt-8 flex flex-wrap gap-3 text-sm text-indigo-100/80">
+              <div class="chip rounded-full px-3 py-2">Birth Date Analysis</div>
+              <div class="chip rounded-full px-3 py-2">Name Numerology</div>
+              <div class="chip rounded-full px-3 py-2">Health Guidance</div>
+              <div class="chip rounded-full px-3 py-2">Career Direction</div>
+            </div>
+          </div>
+
+          <div class="relative min-h-[420px] md:min-h-[520px] fade-up" style="animation-delay:.12s">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="orbit w-[340px] h-[340px] sm:w-[420px] sm:h-[420px]"></div>
+              <div class="orbit reverse w-[250px] h-[250px] sm:w-[310px] sm:h-[310px]"></div>
+              <div class="pulse-dot" style="top:18%; left:64%"></div>
+              <div class="pulse-dot" style="top:66%; left:18%; background:linear-gradient(135deg, #ec4899, white)"></div>
+              <div class="pulse-dot" style="top:76%; left:74%; background:linear-gradient(135deg, #8b5cf6, white)"></div>
+            </div>
+
+            <div class="relative z-10 max-w-md mx-auto mt-8 sm:mt-16">
+              <div class="glass glow soft-ring rounded-3xl p-5 sm:p-6 card-hover">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-xs uppercase tracking-[0.24em] text-indigo-200/70">Live Preview</p>
+                    <h3 class="mt-1 text-xl font-semibold">Numerology Snapshot</h3>
+                  </div>
+                  <div class="float text-4xl">✨</div>
+                </div>
+                <div class="mt-5 space-y-4">
+                  <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-indigo-100/70">Life Path</span>
+                      <span class="font-semibold">7</span>
+                    </div>
+                    <div class="mt-2 meter h-2 rounded-full"><span style="width:78%"></span></div>
+                    <p class="mt-3 text-sm text-indigo-100/75">Reflective, analytical, spiritually curious.</p>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                      <div class="text-sm text-indigo-100/70">Health Focus</div>
+                      <div class="mt-2 font-medium">Balance stress & sleep</div>
+                    </div>
+                    <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                      <div class="text-sm text-indigo-100/70">Career Focus</div>
+                      <div class="mt-2 font-medium">Research & strategy</div>
+                    </div>
+                  </div>
+                  <div class="rounded-2xl bg-gradient-to-r from-fuchsia-500/15 to-cyan-500/15 border border-white/10 p-4 text-sm text-indigo-50/90">
+                    "You thrive when intuition meets structure."
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="analyzer" class="pb-16 md:pb-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid xl:grid-cols-[1.05fr_.95fr] gap-8">
+          <div class="glass glow rounded-3xl p-5 sm:p-8 soft-ring">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="text-xs uppercase tracking-[0.24em] text-indigo-200/70">Interactive analyzer</p>
+                <h2 class="mt-2 text-2xl sm:text-3xl font-semibold">Generate your numerology reading</h2>
+                <p class="mt-2 text-indigo-100/70">Enter your details to receive AI-styled numerology-based health and career guidance.</p>
+              </div>
+              <div class="hidden sm:flex w-12 h-12 rounded-2xl glass items-center justify-center text-2xl">🧠</div>
+            </div>
+
+            <form id="numerologyForm" class="mt-8 space-y-5">
+              <div class="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label for="fullName" class="block text-sm font-medium text-indigo-100/90 mb-2">Full Name</label>
+                  <input id="fullName" type="text" placeholder="e.g., Olivia Harper" class="w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20 transition" required />
+                </div>
+                <div>
+                  <label for="birthDate" class="block text-sm font-medium text-indigo-100/90 mb-2">Birth Date</label>
+                  <input id="birthDate" type="date" class="w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20 transition text-white" required />
+                </div>
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label for="gender" class="block text-sm font-medium text-indigo-100/90 mb-2">Tone Preference</label>
+                  <select id="gender" class="w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20 transition">
+                    <option value="balanced" class="text-slate-900">Balanced</option>
+                    <option value="gentle" class="text-slate-900">Gentle</option>
+                    <option value="direct" class="text-slate-900">Direct</option>
+                    <option value="inspiring" class="text-slate-900">Inspiring</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="focus" class="block text-sm font-medium text-indigo-100/90 mb-2">Priority Focus</label>
+                  <select id="focus" class="w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20 transition">
+                    <option value="both" class="text-slate-900">Health + Career</option>
+                    <option value="health" class="text-slate-900">Health</option>
+                    <option value="career" class="text-slate-900">Career</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label for="depth" class="block text-sm font-medium text-indigo-100/90">Reading Depth</label>
+                  <span id="depthValue" class="text-sm text-cyan-200">70%</span>
+                </div>
+                <input id="depth" type="range" min="30" max="100" step="10" value="70" />
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-5">
+                <button type="submit" class="rounded-2xl px-5 py-3 font-medium bg-gradient-to-r from-violet-500 to-cyan-500 hover:opacity-95 transition shadow-lg shadow-cyan-500/20">
+                  Generate Reading
+                </button>
+                <button type="button" id="fillDemo" class="rounded-2xl px-5 py-3 font-medium glass hover:bg-white/10 transition">
+                  Try Demo Data
+                </button>
+              </div>
+            </form>
+
+            <div class="mt-6 disclaimer rounded-2xl p-4 text-sm text-amber-100/90">
+              <strong>Note:</strong> This tool provides numerology-based wellness and career guidance for inspiration and self-reflection only. It is not medical, psychological, legal, or financial advice.
+            </div>
+          </div>
+
+          <div class="glass glow rounded-3xl p-5 sm:p-8 soft-ring min-h-[520px]">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-xs uppercase tracking-[0.24em] text-indigo-200/70">AI reading</p>
+                <h3 class="mt-2 text-2xl font-semibold">Your personalized insight</h3>
+              </div>
+              <div class="w-11 h-11 rounded-2xl glass flex items-center justify-center text-xl">📊</div>
+            </div>
+
+            <div id="emptyState" class="mt-10 text-center">
+              <div class="mx-auto w-20 h-20 rounded-3xl glass flex items-center justify-center text-4xl float">🌌</div>
+              <h4 class="mt-5 text-xl font-semibold">No reading yet</h4>
+              <p class="mt-2 text-indigo-100/70 max-w-md mx-auto">Fill in your name and birth date to reveal your numerology-based health and career guidance.</p>
+            </div>
+
+            <div id="result" class="hidden mt-8">
+              <div class="grid grid-cols-3 gap-3">
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4 text-center card-hover">
+                  <div class="text-xs text-indigo-100/65 uppercase tracking-wider">Life Path</div>
+                  <div id="lifePathNum" class="mt-2 text-3xl font-semibold gradient-text">7</div>
+                </div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4 text-center card-hover">
+                  <div class="text-xs text-indigo-100/65 uppercase tracking-wider">Destiny</div>
+                  <div id="destinyNum" class="mt-2 text-3xl font-semibold gradient-text">3</div>
+                </div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4 text-center card-hover">
+                  <div class="text-xs text-indigo-100/65 uppercase tracking-wider">Soul Urge</div>
+                  <div id="soulNum" class="mt-2 text-3xl font-semibold gradient-text">6</div>
+                </div>
+              </div>
+
+              <div class="mt-6 grid sm:grid-cols-2 gap-4">
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                  <div class="flex justify-between text-sm mb-2"><span class="text-indigo-100/70">Wellness Alignment</span><span id="wellnessScoreLabel">84%</span></div>
+                  <div class="meter h-3 rounded-full"><span id="wellnessScore" style="width:84%"></span></div>
+                </div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                  <div class="flex justify-between text-sm mb-2"><span class="text-indigo-100/70">Career Alignment</span><span id="careerScoreLabel">79%</span></div>
+                  <div class="meter h-3 rounded-full"><span id="careerScore" style="width:79%"></span></div>
+                </div>
+              </div>
+
+              <div class="mt-6 rounded-2xl bg-gradient-to-r from-violet-500/15 via-cyan-500/15 to-pink-500/15 border border-white/10 p-5">
+                <div class="text-sm text-indigo-100/70">Reading for <span id="resultName" class="text-white font-medium"></span></div>
+                <p id="headline" class="mt-2 text-lg font-medium"></p>
+              </div>
+
+              <div class="mt-6 space-y-4">
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-5">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xl">🩺</span>
+                    <h4 class="font-semibold">Health Guidance</h4>
+                  </div>
+                  <p id="healthText" class="mt-3 text-indigo-100/80 leading-7"></p>
+                </div>
+
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-5">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xl">💼</span>
+                    <h4 class="font-semibold">Career Guidance</h4>
+                  </div>
+                  <p id="careerText" class="mt-3 text-indigo-100/80 leading-7"></p>
+                </div>
+
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-5">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xl">🧭</span>
+                    <h4 class="font-semibold">Best Practices</h4>
+                  </div>
+                  <ul id="tipsList" class="mt-3 space-y-2 text-indigo-100/80"></ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="loading" class="hidden mt-10">
+              <div class="flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-cyan-400 animate-pulse"></div>
+                <div class="typing text-indigo-100/80">Analyzing your numerology pattern</div>
+              </div>
+              <div class="mt-4 grid gap-3">
+                <div class="h-24 rounded-2xl bg-white/5 border border-white/10 animate-pulse"></div>
+                <div class="h-24 rounded-2xl bg-white/5 border border-white/10 animate-pulse"></div>
+                <div class="h-24 rounded-2xl bg-white/5 border border-white/10 animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="pb-16 md:pb-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto">
+          <p class="text-xs uppercase tracking-[0.24em] text-indigo-200/70">Features</p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-semibold">Built for clarity, beauty, and self-discovery</h2>
+        </div>
+        <div class="mt-10 grid md:grid-cols-2 xl:grid-cols-4 gap-5">
+          <div class="glass rounded-3xl p-6 card-hover">
+            <div class="text-3xl">🗓️</div>
+            <h3 class="mt-4 font-semibold text-lg">Life Path Analysis</h3>
+            <p class="mt-2 text-indigo-100/70 text-sm">Uses your birth date to estimate core life energy and personal direction.</p>
+          </div>
+          <div class="glass rounded-3xl p-6 card-hover">
+            <div class="text-3xl">🔤</div>
+            <h3 class="mt-4 font-semibold text-lg">Name Numerology</h3>
+            <p class="mt-2 text-indigo-100/70 text-sm">Calculates destiny and soul urge values from the letters in your name.</p>
+          </div>
+          <div class="glass rounded-3xl p-6 card-hover">
+            <div class="text-3xl">🌿</div>
+            <h3 class="mt-4 font-semibold text-lg">Wellness Guidance</h3>
+            <p class="mt-2 text-indigo-100/70 text-sm">Provides gentle reflective suggestions for routines, balance, and energy care.</p>
+          </div>
+          <div class="glass rounded-3xl p-6 card-hover">
+            <div class="text-3xl">🚀</div>
+            <h3 class="mt-4 font-semibold text-lg">Career Direction</h3>
+            <p class="mt-2 text-indigo-100/70 text-sm">Highlights work styles, strengths, and environments you may resonate with.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="pb-20">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass rounded-3xl p-6 sm:p-8 soft-ring">
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-5">
+              <div class="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Step 1</div>
+              <h3 class="mt-3 font-semibold text-lg">Enter your details</h3>
+              <p class="mt-2 text-sm text-indigo-100/70">Provide your full name and birth date for core numerology calculations.</p>
+            </div>
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-5">
+              <div class="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Step 2</div>
+              <h3 class="mt-3 font-semibold text-lg">Reveal your numbers</h3>
+              <p class="mt-2 text-sm text-indigo-100/70">The app derives your life path, destiny, and soul urge numbers instantly.</p>
+            </div>
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-5">
+              <div class="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Step 3</div>
+              <h3 class="mt-3 font-semibold text-lg">Read your guidance</h3>
+              <p class="mt-2 text-sm text-indigo-100/70">Get elegant, personalized health and career suggestions in seconds.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-indigo-100/60">
+      <div>© 2026 NumeroPath AI</div>
+      <div>Numerology-inspired guidance for reflection, not diagnosis or professional advice.</div>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('numerologyForm');
+    const depth = document.getElementById('depth');
+    const depthValue = document.getElementById('depthValue');
+    const fillDemo = document.getElementById('fillDemo');
+
+    const emptyState = document.getElementById('emptyState');
+    const result = document.getElementById('result');
+    const loading = document.getElementById('loading');
+
+    const mapLetters = {
+      A:1, J:1, S:1,
+      B:2, K:2, T:2,
+      C:3, L:3, U:3,
+      D:4, M:4, V:4,
+      E:5, N:5, W:5,
+      F:6, O:6, X:6,
+      G:7, P:7, Y:7,
+      H:8, Q:8, Z:8,
+      I:9, R:9
+    };
+
+    depth.addEventListener('input', () => {
+      depthValue.textContent = depth.value + '%';
+    });
+
+    fillDemo.addEventListener('click', () => {
+      document.getElementById('fullName').value = 'Ava Morgan';
+      document.getElementById('birthDate').value = '1996-07-24';
+      document.getElementById('gender').value = 'inspiring';
+      document.getElementById('focus').value = 'both';
+      document.getElementById('depth').value = 80;
+      depthValue.textContent = '80%';
+    });
+
+    function reduceNumber(num) {
+      const master = [11, 22, 33];
+      while (num > 9 && !master.includes(num)) {
+        num = num.toString().split('').reduce((a,b) => a + Number(b), 0);
+      }
+      return num;
+    }
+
+    function calcLifePath(dateStr) {
+      const digits = dateStr.replaceAll('-', '').split('').map(Number);
+      return reduceNumber(digits.reduce((a,b) => a+b, 0));
+    }
+
+    function calcDestiny(name) {
+      const letters = name.toUpperCase().replace(/[^A-Z]/g,'').split('');
+      const total = letters.reduce((sum, ch) => sum + (mapLetters[ch] || 0), 0);
+      return reduceNumber(total);
+    }
+
+    function calcSoulUrge(name) {
+      const vowels = name.toUpperCase().replace(/[^A-Z]/g,'').split('').filter(ch => 'AEIOU'.includes(ch));
+      const total = vowels.reduce((sum, ch) => sum + (mapLetters[ch] || 0), 0);
+      return reduceNumber(total || 1);
+    }
+
+    function profileFor(num){
+      const profiles = {
+        1: {
+          title:"Independent pioneer energy",
+          health:"Your numerology suggests strong drive and self-starting energy. You may feel best when movement, leadership, and personal control are part of your routine. Support your well-being through structured sleep, hydration, and regular physical activity to prevent burnout from overpushing.",
+          career:"You are often suited to initiative-driven roles where autonomy matters. Entrepreneurship, management, sales, innovation, and roles requiring courage or original thinking may feel natural. Growth comes from balancing confidence with collaboration.",
+          tips:["Create a consistent daily routine.", "Avoid taking on everything alone.", "Choose goals that let you lead and build."]
+        },
+        2: {
+          title:"Sensitive harmonizer energy",
+          health:"Your pattern points to emotional sensitivity and the need for balance. Calm environments, supportive relationships, and stress-reduction practices may help you feel centered. Gentle exercise, restorative sleep, and boundaries can be especially beneficial.",
+          career:"You tend to thrive in cooperative, diplomatic, and people-centered work. Counseling, HR, partnership roles, design support, coordination, and relationship management may align well. Your strength is in bringing calm and connection.",
+          tips:["Protect your energy from overstimulation.", "Work in supportive teams.", "Use your listening skills as a professional advantage."]
+        },
+        3: {
+          title:"Creative communicator energy",
+          health:"Your numerology emphasizes expression and emotional flow. You may benefit from creative outlets, social connection, and routines that reduce scattered energy. Be mindful of inconsistency; regular meals, sleep, and grounding habits can help.",
+          career:"Communication-based paths are favorable. Writing, marketing, teaching, media, speaking, content creation, and branding may fit your natural strengths. Your growth comes from finishing what you start and turning ideas into systems.",
+          tips:["Channel emotions into creativity.", "Build discipline around your talents.", "Choose roles with expression and visibility."]
+        },
+        4: {
+          title:"Grounded builder energy",
+          health:"Your vibration suggests strength through routine, discipline, and stability. Physical structure often helps you feel well, so regular movement, posture care, and practical wellness habits are useful. Watch for rigidity or stress caused by overwork.",
+          career:"You may do well in operations, engineering, administration, finance, architecture, logistics, and process-based roles. You are strongest where consistency, reliability, and detail matter.",
+          tips:["Maintain sustainable routines.", "Avoid perfectionism.", "Build careers with long-term security and clear structure."]
+        },
+        5: {
+          title:"Dynamic freedom-seeker energy",
+          health:"Your numbers reflect changeability and high stimulation. Variety can energize you, but excess can drain you. Focus on nervous system balance through movement, mindful breaks, and avoiding chaotic routines.",
+          career:"You often shine in fast-moving environments like sales, travel, media, startups, events, consulting, or digital business. Freedom, change, and novelty matter. Your success improves when you pair flexibility with follow-through.",
+          tips:["Create healthy flexibility, not chaos.", "Choose dynamic work environments.", "Ground yourself before big decisions."]
+        },
+        6: {
+          title:"Nurturing responsibility energy",
+          health:"Your pattern suggests deep care for others, but that can lead to emotional overload. Wellness improves when you give yourself the same care you give to everyone else. Prioritize rest, emotional processing, and balanced responsibility.",
+          career:"Teaching, wellness, caregiving, counseling, hospitality, design, and community leadership may be fulfilling. You often bring warmth, harmony, and dependable presence to your work.",
+          tips:["Set boundaries around helping.", "Choose purpose-driven work.", "Balance duty with self-care."]
+        },
+        7: {
+          title:"Reflective analyst energy",
+          health:"Your numerology points to mental depth and inward focus. Quiet time, quality rest, and reflective practices may support your well-being. Because your mind is active, stress management, sleep hygiene, and time away from overstimulation can be valuable.",
+          career:"Research, analysis, strategy, technology, science, psychology, writing, and spiritual or investigative fields may suit you. You often perform best when you have space to think deeply and work meaningfully.",
+          tips:["Protect your quiet time.", "Choose depth over distraction.", "Pursue careers requiring insight and expertise."]
+        },
+        8: {
+          title:"Ambitious executive energy",
+          health:"Your vibration suggests intensity, stamina, and pressure handling, but also the risk of pushing too hard. Sustainable success comes from pacing, recovery, and stress-aware routines. Physical strength work and restorative downtime may help.",
+          career:"Business, leadership, finance, law, executive roles, operations, and high-responsibility positions often align with your natural power. You tend to excel where outcomes, influence, and resource management matter.",
+          tips:["Lead without overcontrolling.", "Balance ambition with recovery.", "Build success on ethics and consistency."]
+        },
+        9: {
+          title:"Compassionate visionary energy",
+          health:"Your numbers suggest emotional depth, empathy, and broad sensitivity. You may benefit from practices that help release emotional buildup, such as journaling, creative expression, meditation, or service with boundaries.",
+          career:"Humanitarian work, education, coaching, healing arts, creative leadership, advocacy, and mission-driven careers may feel meaningful. You are often motivated by impact more than status.",
+          tips:["Protect yourself from emotional exhaustion.", "Choose meaningful work.", "Let compassion guide, not drain, you."]
+        },
+        11: {
+          title:"Intuitive illuminator energy",
+          health:"This master number suggests heightened sensitivity and intuition. Grounding practices, steady routines, and nervous system care are especially important. You may do best when inspiration is balanced with rest and emotional protection.",
+          career:"Creative leadership, speaking, healing, coaching, design, innovation, or spiritual guidance may resonate. You often inspire others through vision and insight.",
+          tips:["Honor intuition but stay grounded.", "Work where inspiration matters.", "Use calm structure to support your gifts."]
+        },
+        22: {
+          title:"Master builder energy",
+          health:"This pattern combines vision with execution, which can create immense drive. To stay balanced, build strong foundational habits around rest, nutrition, and stress management. Avoid carrying the world on your shoulders.",
+          career:"Large-scale leadership, business development, systems building, architecture, social enterprise, and strategic planning may align strongly. You are often suited to turning big ideas into lasting results.",
+          tips:["Think big, act steadily.", "Protect your energy from pressure overload.", "Pursue work with long-term impact."]
+        },
+        33: {
+          title:"Master healer energy",
+          health:"This number suggests compassionate, uplifting, and service-oriented energy. Self-care is essential because you may absorb others' needs strongly. Emotional reset, reflection, and supportive communities can help maintain balance.",
+          career:"Healing, teaching, mentoring, creative guidance, community care, and meaningful leadership are favorable paths. Your presence may naturally encourage others.",
+          tips:["Serve without self-neglect.", "Choose heart-centered leadership.", "Let wisdom grow through healthy boundaries."]
+        }
+      };
+      return profiles[num] || profiles[7];
+    }
+
+    function toneAdjust(text, tone){
+      if(tone === 'gentle') return text.replace(/You may/g, "You may gently").replace(/You are often/g, "You are often naturally");
+      if(tone === 'direct') return text.replace(/may /g, "").replace(/often /g, "");
+      if(tone === 'inspiring') return "You carry meaningful potential. " + text;
+      return text;
+    }
+
+    function headline(name, lp, des, soul){
+      return `${name}, your numerology blend of Life Path ${lp}, Destiny ${des}, and Soul Urge ${soul} suggests a unique balance of purpose, talent, and inner motivation.`;
+    }
+
+    function scoreFromNumbers(a,b,c,depthVal,mode='health'){
+      let base = mode === 'health'
+        ? 62 + ((a*5 + c*3 + b*2) % 28)
+        : 60 + ((b*5 + a*3 + c*2) % 30);
+      const mod = Math.round((depthVal - 50) / 6);
+      return Math.max(55, Math.min(98, base + mod));
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('fullName').value.trim();
+      const birthDate = document.getElementById('birthDate').value;
+      const tone = document.getElementById('gender').value;
+      const focus = document.getElementById('focus').value;
+      const depthVal = Number(document.getElementById('depth').value);
+
+      if (!name || !birthDate) return;
+
+      emptyState.classList.add('hidden');
+      result.classList.add('hidden');
+      loading.classList.remove('hidden');
+
+      setTimeout(() => {
+        const lp = calcLifePath(birthDate);
+        const des = calcDestiny(name);
+        const soul = calcSoulUrge(name);
+
+        const primary = profileFor(lp);
+        const secondary = profileFor(des);
+
+        const wellness = scoreFromNumbers(lp, des, soul, depthVal, 'health');
+        const career = scoreFromNumbers(lp, des, soul, depthVal, 'career');
+
+        document.getElementById('lifePathNum').textContent = lp;
+        document.getElementById('destinyNum').textContent = des;
+        document.getElementById('soulNum').textContent = soul;
+        document.getElementById('resultName').textContent = name;
+        document.getElementById('headline').textContent = headline(name, lp, des, soul);
+
+        let healthText = toneAdjust(primary.health, tone);
+        let careerText = toneAdjust(secondary.career, tone);
+
+        if (focus === 'health') {
+          careerText = "Your selected focus is health, so this career note is brief: choose work environments that support your energy, values, and emotional balance.";
+        } else if (focus === 'career') {
+          healthText = "Your selected focus is career, so this health note is brief: support your long-term success through rest, consistency, stress care, and sustainable habits.";
+        }
+
+        document.getElementById('healthText').textContent = healthText;
+        document.getElementById('careerText').textContent = careerText;
+
+        document.getElementById('wellnessScore').style.width = wellness + '%';
+        document.getElementById('careerScore').style.width = career + '%';
+        document.getElementById('wellnessScoreLabel').textContent = wellness + '%';
+        document.getElementById('careerScoreLabel').textContent = career + '%';
+
+        const tipsList = document.getElementById('tipsList');
+        const mergedTips = [...primary.tips, ...secondary.tips].slice(0, Math.max(3, Math.floor(depthVal / 20) + 2));
+        tipsList.innerHTML = '';
+        mergedTips.forEach(tip => {
+          const li = document.createElement('li');
+          li.className = 'flex items-start gap-2';
+          li.innerHTML = `<span class="mt-1 text-cyan-300">•</span><span>${tip}</span>`;
+          tipsList.appendChild(li);
+        });
+
+        loading.classList.add('hidden');
+        result.classList.remove('hidden');
+      }, 1200);
+    });
+  </script>
+</body>
+</html>
